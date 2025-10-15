@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindEase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  <style>
+    :root {
+      --beige: #f5f1e8;
+      --text: #2b2b2b;
+      --accent: #b29b80;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: var(--beige);
+      color: var(--text);
+      scroll-behavior: smooth;
+    }
+
+    /* NAVBAR */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 60px;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+
+    .logo {
+      font-weight: 600;
+      font-size: 22px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text);
+      transition: 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* HERO */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: 70px;
+    }
+
+    .hero-image-container {
+      position: relative;
+      width: 100%;
+      max-height: 80vh;
+      overflow: hidden;
+    }
+
+    .hero-image-container img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+
+    .hero-image-container h1 {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 36px;
+      font-weight: 500;
+      text-align: center;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+      padding: 0 20px;
+    }
+
+    .hero-description {
+      margin: 30px 20px;
+      max-width: 700px;
+    }
+
+    .hero-description h2 {
+      font-weight: 700;
+      font-size: 36px;
+      margin-bottom: 15px;
+    }
+
+    .hero-description p {
+      font-size: 18px;
+      color: #4f4f4f;
+      margin-bottom: 25px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      padding: 12px 30px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .cta-button:hover {
+      background: #9b886e;
+      transform: translateY(-3px);
+    }
+
+    /* FEATURES */
+    #features {
+      padding: 120px 60px;
+      text-align: center;
+    }
+
+    #features h2 {
+      font-size: 34px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    #features p {
+      font-size: 16px;
+      color: #4f4f4f;
+      max-width: 800px;
+      margin: 0 auto 60px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .feature-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.07);
+    }
+
+    .feature-box .icon {
+      font-size: 28px;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .feature-box h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .feature-box p {
+      font-size: 15px;
+      color: #4f4f4f;
+      line-height: 1.6;
+    }
+
+    /* BLOG SECTION */
+    .blog-section {
+      background: #f5f1e8;
+      padding: 120px 60px;
+      text-align: center;
+    }
+
+    .blog-header h2 {
+      font-size: 34px;
+      font-weight: 600;
+      color: #2b2b2b;
+    }
+
+    .blog-header p {
+      color: #5c5c5c;
+      font-size: 16px;
+      margin-top: 10px;
+      margin-bottom: 60px;
+    }
+
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .blog-card {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .blog-card img {
+      width: 100%;
+      height: 230px;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .blog-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .blog-content {
+      padding: 25px;
+      text-align: left;
+    }
+
+    .blog-content h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #2b2b2b;
+      margin-bottom: 10px;
+    }
+
+    .blog-content p {
+      font-size: 15px;
+      color: #4f4f4f;
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+
+    .read-more {
+      text-decoration: none;
+      color: #b29b80;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .read-more:hover {
+      color: #8c7a5e;
+    }
+
+    /* FAQ SECTION */
+    .faq-section {
+      background: #f7f4ec;
+      padding: 120px 60px;
+      text-align: center;
+    }
+
+    .faq-header h2 {
+      font-size: 34px;
+      font-weight: 600;
+      color: #2b2b2b;
+    }
+
+    .faq-header p {
+      color: #5c5c5c;
+      font-size: 16px;
+      margin-top: 10px;
+      margin-bottom: 60px;
+    }
+
+    .faq-container {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .faq-item {
+      background: #fff;
+      margin-bottom: 18px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      text-align: left;
+      font-size: 18px;
+      font-weight: 500;
+      color: #2b2b2b;
+      padding: 20px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .faq-question i {
+      transition: transform 0.3s ease;
+    }
+
+    .faq-item.active .faq-question i {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      display: none;
+      padding: 0 25px 20px;
+      font-size: 15px;
+      color: #4f4f4f;
+      line-height: 1.6;
+    }
+
+    .faq-item.active .faq-answer {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    footer {
+      text-align: center;
+      padding: 60px;
+      font-size: 14px;
+      color: #777;
+      background: #efe8dc;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 14px 30px;
+      }
+      #features {
+        padding: 90px 30px;
+      }
+      .blog-section,
+      .faq-section {
+        padding: 90px 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="logo">MindEase</div>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#features">Features</a>
+      <a href="#blog">Blog</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+ <section id="home" class="hero">
+  <div class="hero-image">
+    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80" alt="Calm Clouds" />
+    <div class="overlay"></div>
+    <div class="hero-content">
+      <h1><b>MindEase</b></h1>
+      <p>your gentle conversational companion where calm meets clarity, designed for your peace of mind.</p>
+      <a href="#" class="cta-button">Download MindEase Free</a>
+    </div>
+  </div>
+</section>
+
+<style>
+.hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: zoom 20s ease-in-out infinite alternate;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(245, 241, 232, 0.6);
+  z-index: 1;
+}
+
+.hero-content {
+  position: absolute;
+  z-index: 2;
+  max-width: 700px;
+  color: #2b2b2b;
+  animation: fadeUp 2s ease forwards;
+}
+
+.hero-content h1 {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+.hero-content p {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.cta-button {
+  display: inline-block;
+  background: #b29b80;
+  color: white;
+  padding: 14px 40px;
+  border-radius: 30px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+  box-shadow: 0 0 20px rgba(178, 155, 128, 0.7);
+  transform: translateY(-3px);
+}
+
+/* Animations */
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoom {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+</style>
+
+
+  <!-- FEATURES -->
+  <section id="features" class="fade">
+    <h2>Unlock Your Inner Calm</h2>
+    <p>MindEase offers six unique tools to support your emotional journey, assuring you that you are understood and things will be okay.</p>
+
+    <div class="features-grid">
+      <div class="feature-box">
+        <span class="icon"><i class="fas fa-heart"></i></span>
+        <h3>Emotional Companion</h3>
+        <p>A gentle AI that understands your tone and emotions, responding with personalized, encouraging messages.</p>
+      </div>
+      <div class="feature-box">
+        <span class="icon"><i class="fas fa-volume-up"></i></span>
+        <h3>Voice Memories</h3>
+        <p>Upload and listen to cherished voice recordings of loved ones for peace during lonely moments.</p>
+      </div>
+      <div class="feature-box">
+        <span class="icon"><i class="fas fa-feather-alt"></i></span>
+        <h3>Journaling Space</h3>
+        <p>A safe, private corner where you can write your thoughts and emotions freely without judgment.</p>
+      </div>
+      <div class="feature-box">
+        <span class="icon"><i class="fas fa-paint-brush"></i></span>
+        <h3>Doodle Pad</h3>
+        <p>A visual outlet for when words fall short—draw, scribble, or express your feelings visually.</p>
+      </div>
+      <div class="feature-box">
+        <span class="icon"><i class="fas fa-book-open"></i></span>
+        <h3>Motivational Reads</h3>
+        <p>Short stories and plots from inspirational novels to reignite positivity and hope within minutes.</p>
+      </div>
+      <div class="feature-box">
+        <span class="icon"><i class="fas fa-leaf"></i></span>
+        <h3>Relaxation Tools</h3>
+        <p>Calming sounds, guided breathing, and soothing mini-games to ease stress naturally.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG -->
+  <section id="blog" class="fade blog-section">
+    <div class="blog-header">
+      <h2>Explore Our Blog</h2>
+      <p>Gentle reads to help you slow down, reflect, and recharge — one mindful story at a time.</p>
+    </div>
+
+    <div class="blog-grid">
+      <div class="blog-card">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80" alt="Mindful Breathing" />
+        <div class="blog-content">
+          <h3>Mindful Breathing: Finding Calm in 60 Seconds</h3>
+          <p>Learn the science behind a single deep breath and how it can reset your nervous system instantly.</p>
+          <a href="#" class="read-more">Read More →</a>
+        </div>
+      </div>
+
+      <div class="blog-card">
+        <img src="https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=900&q=80" alt="Letting Go" />
+        <div class="blog-content">
+          <h3>Letting Go of Control: The Art of Surrender</h3>
+          <p>When life feels uncertain, acceptance can be the most peaceful path. Here’s how to begin letting go.</p>
+          <a href="#" class="read-more">Read More →</a>
+        </div>
+      </div>
+
+      <div class="blog-card">
+        <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80" alt="Digital Detox" />
+        <div class="blog-content">
+          <h3>Digital Detox: Reconnecting with the Present</h3>
+          <p>Step back from screens, reconnect with yourself, and rediscover the beauty of boredom.</p>
+          <a href="#" class="read-more">Read More →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="fade faq-section">
+    <div class="faq-header">
+      <h2>Frequently Asked Questions</h2>
+      <p>Find clarity about how MindEase supports you on your mental wellness journey.</p>
+    </div>
+
+    <div class="faq-container">
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>🌸 What makes MindEase different from other mental health apps?</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="faq-answer">
+          <p>Unlike typical apps, MindEase is built around empathy. It listens gently, adapts to your emotional tone, and suggests the right activity — journaling, doodling, or calm breathing — at the perfect moment.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>🌿 How does the Emotional Companion work?</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="faq-answer">
+          <p>MindEase’s Emotional Companion analyzes tone, emotion, and context in your text or voice, then responds with messages designed to comfort, uplift, or gently guide you toward calm.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>🪷 Is my data private and secure?</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="faq-answer">
+          <p>Yes. All your journaling and emotional data are stored locally on your device by default — never shared, never uploaded. Your peace of mind includes your privacy.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>☁️ Can I use MindEase offline?</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="faq-answer">
+          <p>Yes. Core tools like journaling, doodle pad, and relaxation sounds work offline, so you can find comfort even when disconnected from the internet.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>© 2025 MindEase | Designed for Hackathon Presentation</footer>
+
+  <script>
+    // Scroll reveal animation
+    const faders = document.querySelectorAll(".fade");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if(entry.isIntersecting) {
+          entry.target.classList.add("appear");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {threshold: 0.2});
+    faders.forEach(fader => observer.observe(fader));
+
+    // FAQ toggle
+    const faqItems = document.querySelectorAll(".faq-item");
+    faqItems.forEach(item => {
+      const question = item.querySelector(".faq-question");
+      question.addEventListener("click", () => {
+        item.classList.toggle("active");
+      });
+    });
+  </script>
+</body>
+</html>
