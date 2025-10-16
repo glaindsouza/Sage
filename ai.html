@@ -38,36 +38,11 @@ body{height:100vh;display:flex;justify-content:center;align-items:center;backgro
 .feature-btn{display:block;margin:5px 0;background:#f5f1e8;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;transition:0.2s;}
 .feature-btn:hover{background:#e9dcc5;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* Small visual hint for supportive prompt */
+.bot-prompt { font-weight:600; font-size:0.95rem; opacity:0.95; }
 </style>
 
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAv75ZIf2YHovSBxPE7fAZZfzItXMYPUDI",
-  authDomain: "mindease-f3641.firebaseapp.com",
-  projectId: "mindease-f3641",
-  storageBucket: "mindease-f3641.firebasestorage.app",
-  messagingSenderId: "683571418303",
-  appId: "1:683571418303:web:56183c8b6b48d2dfaa220a",
-  measurementId: "G-NYJV83S884"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-window.currentUserId = null;
-signInAnonymously(auth).then(userCred=>{
-    window.currentUserId = userCred.user.uid;
-    loadChatThreads();
-}).catch(console.error);
-
-window.firebaseDB = db;
-</script>
 </head>
 <body>
 <div class="background-overlay"></div>
@@ -77,7 +52,6 @@ window.firebaseDB = db;
     <div class="logo"><h1>MindEase <span>AI</span></h1></div>
     <button id="newChatBtn" class="sidebar-btn"><i class="fa-solid fa-plus"></i> New Chat</button>
     <button id="exportChatBtn" class="sidebar-btn"><i class="fa-solid fa-download"></i> Export Chat</button>
-   <!-- <button id="saveChatBtn" class="sidebar-btn"><i class="fa-solid fa-floppy-disk"></i> Save Chat</button>-->
     <button id="clearHistoryBtn" class="sidebar-btn"><i class="fa-solid fa-trash"></i> Delete All History</button>
     <div class="chat-history-list" id="chatHistory"></div>
 </aside>
@@ -99,170 +73,218 @@ window.firebaseDB = db;
 
 </div>
 
-<script type="module">
+<script>
+// ---------- DOM references ----------
 const chatBox = document.getElementById('chatBox');
 const chatForm = document.getElementById('chatForm');
 const userInput = document.getElementById('userInput');
 const newChatBtn = document.getElementById('newChatBtn');
 const exportChatBtn = document.getElementById('exportChatBtn');
-const saveChatBtn = document.getElementById('saveChatBtn');
 const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-const chatHistoryDiv = document.getElementById('chatHistory');
 const fileInput = document.getElementById('fileInput');
 
 let currentChatId = null;
 let localMessages = [];
 
-// ----- AI DATABASE -----
+// ---------- Local user ID ----------
+window.currentUserId = 'local_user';
+
+// ---------- AI database ----------
 const aiDatabase = [
-    {mood:'sad',responses:["I’m here with you — you’re not alone.","Sometimes just talking helps.","Even the smallest step counts."],suggestion:["journal","doodle","calmingSounds"]},
-    {mood:'stressed',responses:["Take a deep breath — we can handle this together.","Try closing your eyes and exhale slowly."],suggestion:["breathing","calmingSounds","voiceMemory"]},
-    {mood:'happy',responses:["Yay! That’s great to hear!","Your positivity is contagious!"],suggestion:["journal","story","doodle"]},
-    {mood:'angry',responses:["I hear you, it's okay to feel frustrated.","Let's redirect that energy positively."],suggestion:["journal","breathing","calmingSounds"]},
-    {mood:'neutral',responses:["Tell me about your day!","Even quiet moments can be meaningful."],suggestion:["journal","story","calmingSounds","doodle"]}
+    {mood:'sad',responses:[
+        "I’m here with you — you’re not alone.",
+        "It’s okay to feel down sometimes. You matter more than you know.",
+        "Sometimes just talking helps. Would you like to write a little in your journal?"
+    ],suggestion:["journal","doodle","calmingSounds"]},
+    {mood:'distressed',responses:[
+        "I’m really sorry that you’re in such deep pain right now. You deserve care and safety.",
+        "You’re not alone — it’s brave of you to share how you feel. You matter deeply.",
+        "This sounds really heavy. Would you like to try a short breathing exercise or write down one thing that’s on your mind?"
+    ],suggestion:["breathing","calmingSounds","voiceMemory"]},
+    {mood:'stressed',responses:[
+        "Take a deep breath — we can handle this together.",
+        "Try closing your eyes and exhale slowly. Would you like to do a 1-minute breathing now?",
+        "You’ve been trying really hard — remember to give yourself some credit."
+    ],suggestion:["breathing","calmingSounds","voiceMemory"]},
+    {mood:'happy',responses:[
+        "Yay! That’s great to hear!",
+        "Your positivity is contagious!",
+        "That sounds wonderful — tell me more about what’s making you happy!"
+    ],suggestion:["journal","story","doodle"]},
+    {mood:'angry',responses:[
+        "I hear you, it's okay to feel frustrated.",
+        "Let's redirect that energy positively. Would you like to try a quick breathing or a doodle break?",
+        "It’s strong of you to express this — maybe we can find a calm way to ease that anger."
+    ],suggestion:["journal","breathing","calmingSounds"]},
+    {mood:'neutral',responses:[
+        "Tell me about your day!",
+        "Even quiet moments can be meaningful.",
+        "Sometimes just being still can bring peace."
+    ],suggestion:["journal","story","calmingSounds","doodle"]}
 ];
 
+// ---------- Mood detection ----------
 function detectMood(text){
     const moodKeywords = {
         happy:[/happy|good|great|excited|fine|awesome/i],
         sad:[/sad|down|depressed|cry|lonely|hopeless/i],
-        stressed:[/stressed|tired|pressure|overwhelmed|anxious/i],
+        distressed:[/i want to die|i wanna die|i'm going to die|want to die|kill myself|suicide|end it all|can't go on|can't take this|cant do this/i],
+        stressed:[/stressed|tired|pressure|overwhelmed|anxious|panic|overwhelming/i],
         angry:[/angry|mad|furious|irritated/i],
         neutral:[/ok|okay|normal|meh/i]
     };
-    for(const mood in moodKeywords){ if(moodKeywords[mood].some(r=>r.test(text))) return mood;}
+    for(const mood in moodKeywords){
+        if(moodKeywords[mood].some(r => r.test(text))) return mood;
+    }
     return 'neutral';
 }
 
-// ----- FEATURE LABELS AND LINKS -----
+// ---------- Feature labels ----------
 function getFeatureLabel(f){
     switch(f){
-        case "journal": return {label:"🗒️ Open Journal", url:"journal.html"};
-        case "breathing": return {label:"🧘 Start Breathing", url:"relaxation-tools.html"};
-        case "calmingSounds": return {label:"🎶 Relax", url:"relaxation-tools.html"};
-        case "doodle": return {label:"✏️ Open Doodle", url:"doodle.html"};
-        case "story": return {label:"📖 Read Motivational Story", url:"story1.html"};
-        case "voiceMemory": return {label:"🎤 Listen to Loved One's Voice", url:"voice-memories.html"};
-        default: return {label:f,url:"#"};
+        case "journal": return {label:"🗒️ Write in Journal", action:()=>openJournal(), url:"journal.html"};
+        case "breathing": return {label:"🧘 Start Breathing", action:()=>startBreathing(), url:"relaxation-tools.html"};
+        case "calmingSounds": return {label:"🎶 Play Calming Sounds", action:()=>openCalmingSounds(), url:"relaxation-tools.html"};
+        case "doodle": return {label:"✏️ Open Doodle", action:()=>openDoodle(), url:"doodle.html"};
+        case "story": return {label:"📖 Read Motivational Story", action:()=>openStory(), url:"story1.html"};
+        case "voiceMemory": return {label:"🎤 Listen to Voice Memory", action:()=>openVoiceMemory(), url:"voice-memories.html"};
+        default: return {label:f, action:()=>{}, url:"#"};
     }
 }
 
-function getBotResponse(userText){
-    const mood = detectMood(userText);
-    const entry = aiDatabase.find(e=>e.mood===mood) || aiDatabase.find(e=>e.mood==='neutral');
-    const msg = entry.responses[Math.floor(Math.random()*entry.responses.length)];
-    const features = [];
-    if(Math.random()<0.3){
-        const featureKey = entry.suggestion[Math.floor(Math.random()*entry.suggestion.length)];
-        features.push(getFeatureLabel(featureKey));
-    }
-    return {msg, features};
-}
+function openJournal(){ window.open('journal.html','_blank'); }
+function startBreathing(){ window.open('relaxation-tools.html','_blank'); }
+function openCalmingSounds(){ window.open('relaxation-tools.html','_blank'); }
+function openDoodle(){ window.open('doodle.html','_blank'); }
+function openStory(){ window.open('story1.html','_blank'); }
+function openVoiceMemory(){ window.open('voice-memories.html','_blank'); }
 
-function displayMessage(msg,sender='bot',features=[]){
-    const div=document.createElement('div');
-    div.classList.add('chat-message',sender);
-    div.textContent = msg;
+// ---------- Display messages ----------
+function displayMessage(msg, sender='bot', features=[]){
+    const div = document.createElement('div');
+    div.classList.add('chat-message', sender);
+
+    if(sender === 'bot' && msg && msg.toLowerCase().includes('would you')) {
+        const p = document.createElement('div');
+        p.className = 'bot-prompt';
+        p.textContent = msg;
+        div.appendChild(p);
+    } else {
+        div.textContent = msg;
+    }
+
     chatBox.appendChild(div);
 
-    features.forEach(f=>{
-        const btn=document.createElement('button');
-        btn.className='feature-btn';
-        btn.textContent=f.label;
-        btn.onclick=()=>window.open(f.url,'_blank');
+    features.forEach(f => {
+        const btn = document.createElement('button');
+        btn.className = 'feature-btn';
+        btn.textContent = f.label;
+        btn.onclick = () => {
+            try { f.action(); } catch(e){ if(f.url) window.open(f.url,'_blank'); }
+        };
         chatBox.appendChild(btn);
     });
 
     chatBox.scrollTop = chatBox.scrollHeight;
-    localMessages.push({sender,text:msg,features,timestamp:new Date().toISOString()});
+    localMessages.push({sender,text:msg,features:features.map(f=>f.label),timestamp:new Date().toISOString()});
 }
 
-// ----- FIREBASE FUNCTIONS -----
-async function saveChatToFirebase(){
-    if(!window.currentUserId || !currentChatId) return;
-    await setDoc(doc(window.firebaseDB,'users',window.currentUserId,'chats',currentChatId),{messages:localMessages,timestamp:new Date()});
-    loadChatThreads();
-}
+// ---------- Bot response ----------
+function getBotResponse(userText) {
+    const mood = detectMood(userText);
 
-async function loadChatThreads(){
-    chatHistoryDiv.innerHTML='';
-    if(!window.currentUserId) return;
-    const q = query(collection(window.firebaseDB,'users',window.currentUserId,'chats'),orderBy('timestamp','desc'));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach(docSnap=>{
-        const div=document.createElement('div');
-        div.className='chat-thread';
-        div.textContent = new Date(docSnap.data().timestamp.toDate ? docSnap.data().timestamp.toDate() : docSnap.data().timestamp).toLocaleString();
-        div.onclick=()=>openChat(docSnap.id);
-        chatHistoryDiv.appendChild(div);
-    });
-}
+    const distressTriggers = [
+        /i want to die/i,/i wanna die/i,/kill myself/i,/suicide/i,/end it all/i,
+        /can't go on/i,/cant go on/i,/i can't take this/i,/i cant take this/i,/i'm going to die/i,
+        /im going to die/i,/feel like to die/i,/feel like dying/i,/want to end my life/i,/end my life/i
+    ];
 
-async function openChat(chatId){
-    currentChatId = chatId;
-    chatBox.innerHTML='';
-    localMessages = [];
-    const docSnap = await getDoc(doc(window.firebaseDB,'users',window.currentUserId,'chats',chatId));
-    if(docSnap.exists()){
-        const messages = docSnap.data().messages || [];
-        messages.forEach(m=>displayMessage(m.text,m.sender,m.features||[]));
-        localMessages = messages;
+    const isDistress = distressTriggers.some(rx => rx.test(userText));
+
+    if (isDistress) {
+        const msg = "It sounds like things are really heavy right now. You're not alone — you matter, and it's okay to pause for a moment. Would you like to try any of these to ease your mind?";
+        const supportiveOptions = [
+            getFeatureLabel("breathing"),
+            getFeatureLabel("journal"),
+            getFeatureLabel("calmingSounds")
+        ];
+        return { msg, features: supportiveOptions, isDistress: true };
     }
+
+    const overwhelmedRegex = /stressed|pressure|overwhelmed|panic|anxious|too much/i;
+    if (overwhelmedRegex.test(userText)) {
+        const msg = "Take a deep breath — we can handle this together. Would you like to try a 1-minute breathing exercise or write something in your journal?";
+        const features = [
+            getFeatureLabel("breathing"),
+            getFeatureLabel("journal"),
+            getFeatureLabel("calmingSounds")
+        ];
+        return { msg, features, isDistress: false };
+    }
+
+    const entry = aiDatabase.find(e => e.mood === mood) || aiDatabase.find(e => e.mood === 'neutral');
+    const msg = entry.responses[Math.floor(Math.random() * entry.responses.length)];
+    const features = [];
+    if(Math.random() < 0.35){
+        const featureKey = entry.suggestion[Math.floor(Math.random() * entry.suggestion.length)];
+        features.push(getFeatureLabel(featureKey));
+    }
+    return { msg, features, isDistress:false };
 }
 
-// ----- EVENTS -----
-chatForm.addEventListener('submit',e=>{
+// ---------- Events ----------
+chatForm.addEventListener('submit', e => {
     e.preventDefault();
     const msg = userInput.value.trim();
     if(!msg) return;
-    displayMessage(msg,'user');
-    userInput.value='';
-    setTimeout(()=>{
-        const bot=getBotResponse(msg);
-        displayMessage(bot.msg,'bot',bot.features);
-    },400);
+    displayMessage(msg, 'user');
+    userInput.value = '';
+
+    setTimeout(() => {
+        const bot = getBotResponse(msg);
+        displayMessage(bot.msg, 'bot', bot.features);
+
+        if(bot.isDistress){
+            displayMessage("If you're in immediate danger or think you might hurt yourself, please reach out to someone now or call your local emergency number.", 'bot', []);
+        }
+    }, 350);
 });
 
-newChatBtn.addEventListener('click',()=>{
-    currentChatId = `chat_${Date.now()}`;
-    chatBox.innerHTML='';
-    localMessages=[];
-    displayMessage("Let's start fresh! How are you feeling today?",'bot');
+newChatBtn.addEventListener('click', () => {
+    chatBox.innerHTML = '';
+    localMessages = [];
+    displayMessage("Let's start fresh! How are you feeling today?", 'bot');
 });
 
-exportChatBtn.addEventListener('click',()=>{
-    const text = localMessages.map(m=>`${m.sender.toUpperCase()}: ${m.text}`).join('\n');
+exportChatBtn.addEventListener('click', () => {
+    const text = localMessages.map(m => `${m.sender.toUpperCase()}: ${m.text}`).join('\n');
     const blob = new Blob([text], {type:'text/plain'});
     const url = URL.createObjectURL(blob);
-    const a=document.createElement('a'); a.href=url; a.download=`mindEase_chat_${new Date().toISOString()}.txt`; a.click();
+    const a = document.createElement('a'); a.href = url;
+    a.download = `mindease_chat_${Date.now()}.txt`; a.click();
     URL.revokeObjectURL(url);
 });
 
-saveChatBtn.addEventListener('click',saveChatToFirebase);
-
-clearHistoryBtn.addEventListener('click',async ()=>{
-    if(!window.currentUserId) return;
-    const chatsCol = collection(window.firebaseDB,'users',window.currentUserId,'chats');
-    const q = query(chatsCol);
-    const docs = await getDocs(q);
-    docs.forEach(d=>deleteDoc(doc(chatsCol,d.id)));
-    chatBox.innerHTML='';
-    localMessages=[];
-    loadChatThreads();
+clearHistoryBtn.addEventListener('click', () => {
+    if(confirm('Delete all chat history?')) {
+        chatBox.innerHTML = '';
+        localMessages = [];
+    }
 });
 
-fileInput.addEventListener('change',e=>{
+fileInput.addEventListener('change', e => {
     const file = e.target.files[0];
     if(!file) return;
-    displayMessage(`You shared an image: ${file.name}`,'user');
-    displayMessage("Nice, this fits your thought!",'bot');
+    displayMessage(`You shared an image: ${file.name}`, 'user');
+    displayMessage("Nice, this fits your thought!", 'bot');
 });
 
-// Start new chat on page load
-newChatBtn.click();
+// ---------- Fresh chat on page load ----------
+window.addEventListener('load', () => {
+    localMessages = [];
+    chatBox.innerHTML = '';
+    displayMessage("Let's start fresh! How are you feeling today?", 'bot');
+});
 </script>
 </body>
 </html>
-
-
-
