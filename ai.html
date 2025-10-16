@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindEase AI - ChatGPT Style</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://kit.fontawesome.com/6a8e2a7a7d.js" crossorigin="anonymous"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif;}
+body{height:100vh;display:flex;justify-content:center;align-items:center;background:#f5f1e8;}
+.background-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#f9f7f3 0%,#f3ede2 40%,#e9dcc5 100%);z-index:-2;}
+.layout{display:flex;width:95%;max-width:1400px;height:90vh;border-radius:25px;background:rgba(255,255,255,0.6);backdrop-filter:blur(25px);box-shadow:0 10px 35px rgba(0,0,0,0.15);overflow:hidden;}
+.sidebar{width:280px;background:rgba(255,255,255,0.4);border-right:1px solid rgba(0,0,0,0.08);display:flex;flex-direction:column;padding:25px;color:#2b2b2b;}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.logo h1{font-size:1.3rem;font-weight:600;color:#2b2b2b;}
+.logo span{color:#b29b80;}
+.sidebar-btn{display:flex;align-items:center;gap:10px;background:#f5f1e8;border:none;color:#2b2b2b;font-weight:500;padding:10px 15px;border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+.sidebar-btn:hover{background:#e9dcc5;transform:translateY(-2px);}
+.chat-history-list{margin-top:10px;overflow-y:auto;flex:1;}
+.chat-thread{padding:8px 10px;border-radius:10px;margin-bottom:5px;cursor:pointer;background:#f5f1e8;transition:0.2s;}
+.chat-thread:hover{background:#e9dcc5;}
+.chat-thread.active{background:#d0c0a0;}
+.chat-area{flex:1;display:flex;flex-direction:column;color:#2b2b2b;position:relative;}
+.chat-header{padding:18px 20px;border-bottom:1px solid rgba(0,0,0,0.08);text-align:center;font-weight:500;letter-spacing:0.5px;color:#4a4a4a;background:rgba(255,255,255,0.5);}
+.chat-box{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;}
+.chat-message{max-width:70%;padding:12px 16px;border-radius:15px;word-wrap:break-word;font-size:0.95rem;animation:fadeIn 0.4s ease;}
+.chat-message.user{align-self:flex-end;background:#e8dfd4;color:#2b2b2b;box-shadow:0 3px 6px rgba(0,0,0,0.05);}
+.chat-message.bot{align-self:flex-start;background:#fdf6ed;color:#2b2b2b;box-shadow:0 3px 6px rgba(0,0,0,0.05);}
+.chat-form{display:flex;align-items:center;padding:15px 20px;border-top:1px solid rgba(0,0,0,0.08);background:rgba(255,255,255,0.7);}
+.chat-form input{flex:1;border:none;background:rgba(255,255,255,0.6);padding:12px 15px;border-radius:25px;color:#2b2b2b;outline:none;font-size:1rem;}
+.chat-form input::placeholder{color:#8b7d6b;}
+.chat-form button{background:#b29b80;border:none;border-radius:50%;width:45px;height:45px;margin-left:10px;color:#fff;font-size:1.1rem;cursor:pointer;transition:all 0.3s ease;}
+.chat-form button:hover{background:#9b886e;}
+.file-upload{margin-right:10px;color:#8b7d6b;cursor:pointer;font-size:1.2rem;}
+.feature-btn{display:block;margin:5px 0;background:#f5f1e8;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;transition:0.2s;}
+.feature-btn:hover{background:#e9dcc5;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+</style>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey:"YOUR_API_KEY",
+    authDomain:"YOUR_AUTH_DOMAIN",
+    projectId:"YOUR_PROJECT_ID",
+    storageBucket:"YOUR_STORAGE_BUCKET",
+    messagingSenderId:"YOUR_MESSAGING_SENDER_ID",
+    appId:"YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+window.currentUserId = null;
+signInAnonymously(auth).then(userCred=>{
+    window.currentUserId = userCred.user.uid;
+    loadChatThreads();
+}).catch(console.error);
+
+window.firebaseDB = db;
+</script>
+</head>
+<body>
+<div class="background-overlay"></div>
+<div class="layout">
+
+<aside class="sidebar">
+    <div class="logo"><h1>MindEase <span>AI</span></h1></div>
+    <button id="newChatBtn" class="sidebar-btn"><i class="fa-solid fa-plus"></i> New Chat</button>
+    <button id="exportChatBtn" class="sidebar-btn"><i class="fa-solid fa-download"></i> Export Chat</button>
+   <!-- <button id="saveChatBtn" class="sidebar-btn"><i class="fa-solid fa-floppy-disk"></i> Save Chat</button>-->
+    <button id="clearHistoryBtn" class="sidebar-btn"><i class="fa-solid fa-trash"></i> Delete All History</button>
+    <div class="chat-history-list" id="chatHistory"></div>
+</aside>
+
+<main class="chat-area">
+    <header class="chat-header">
+        <h2><i class="fa-solid fa-brain"></i> MindEase Assistant</h2>
+    </header>
+    <div class="chat-box" id="chatBox"></div>
+    <form id="chatForm" class="chat-form">
+        <label for="fileInput" class="file-upload">
+            <i class="fa-solid fa-image"></i>
+            <input type="file" id="fileInput" accept="image/*" hidden>
+        </label>
+        <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off">
+        <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+</main>
+
+</div>
+
+<script type="module">
+const chatBox = document.getElementById('chatBox');
+const chatForm = document.getElementById('chatForm');
+const userInput = document.getElementById('userInput');
+const newChatBtn = document.getElementById('newChatBtn');
+const exportChatBtn = document.getElementById('exportChatBtn');
+const saveChatBtn = document.getElementById('saveChatBtn');
+const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+const chatHistoryDiv = document.getElementById('chatHistory');
+const fileInput = document.getElementById('fileInput');
+
+let currentChatId = null;
+let localMessages = [];
+
+// ----- AI DATABASE -----
+const aiDatabase = [
+    {mood:'sad',responses:["I’m here with you — you’re not alone.","Sometimes just talking helps.","Even the smallest step counts."],suggestion:["journal","doodle","calmingSounds"]},
+    {mood:'stressed',responses:["Take a deep breath — we can handle this together.","Try closing your eyes and exhale slowly."],suggestion:["breathing","calmingSounds","voiceMemory"]},
+    {mood:'happy',responses:["Yay! That’s great to hear!","Your positivity is contagious!"],suggestion:["journal","story","doodle"]},
+    {mood:'angry',responses:["I hear you, it's okay to feel frustrated.","Let's redirect that energy positively."],suggestion:["journal","breathing","calmingSounds"]},
+    {mood:'neutral',responses:["Tell me about your day!","Even quiet moments can be meaningful."],suggestion:["journal","story","calmingSounds","doodle"]}
+];
+
+function detectMood(text){
+    const moodKeywords = {
+        happy:[/happy|good|great|excited|fine|awesome/i],
+        sad:[/sad|down|depressed|cry|lonely|hopeless/i],
+        stressed:[/stressed|tired|pressure|overwhelmed|anxious/i],
+        angry:[/angry|mad|furious|irritated/i],
+        neutral:[/ok|okay|normal|meh/i]
+    };
+    for(const mood in moodKeywords){ if(moodKeywords[mood].some(r=>r.test(text))) return mood;}
+    return 'neutral';
+}
+
+// ----- FEATURE LABELS AND LINKS -----
+function getFeatureLabel(f){
+    switch(f){
+        case "journal": return {label:"🗒️ Open Journal", url:"journal.html"};
+        case "breathing": return {label:"🧘 Start Breathing", url:"breathing.html"};
+        case "calmingSounds": return {label:"🎶 Play Calming Sounds", url:"calmingSounds.html"};
+        case "doodle": return {label:"✏️ Open Doodle", url:"doodle.html"};
+        case "story": return {label:"📖 Read Motivational Story", url:"story.html"};
+        case "voiceMemory": return {label:"🎤 Listen to Loved One's Voice", url:"voiceMemory.html"};
+        default: return {label:f,url:"#"};
+    }
+}
+
+function getBotResponse(userText){
+    const mood = detectMood(userText);
+    const entry = aiDatabase.find(e=>e.mood===mood) || aiDatabase.find(e=>e.mood==='neutral');
+    const msg = entry.responses[Math.floor(Math.random()*entry.responses.length)];
+    const features = [];
+    if(Math.random()<0.3){
+        const featureKey = entry.suggestion[Math.floor(Math.random()*entry.suggestion.length)];
+        features.push(getFeatureLabel(featureKey));
+    }
+    return {msg, features};
+}
+
+function displayMessage(msg,sender='bot',features=[]){
+    const div=document.createElement('div');
+    div.classList.add('chat-message',sender);
+    div.textContent = msg;
+    chatBox.appendChild(div);
+
+    features.forEach(f=>{
+        const btn=document.createElement('button');
+        btn.className='feature-btn';
+        btn.textContent=f.label;
+        btn.onclick=()=>window.open(f.url,'_blank');
+        chatBox.appendChild(btn);
+    });
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+    localMessages.push({sender,text:msg,features,timestamp:new Date().toISOString()});
+}
+
+// ----- FIREBASE FUNCTIONS -----
+async function saveChatToFirebase(){
+    if(!window.currentUserId || !currentChatId) return;
+    await setDoc(doc(window.firebaseDB,'users',window.currentUserId,'chats',currentChatId),{messages:localMessages,timestamp:new Date()});
+    loadChatThreads();
+}
+
+async function loadChatThreads(){
+    chatHistoryDiv.innerHTML='';
+    if(!window.currentUserId) return;
+    const q = query(collection(window.firebaseDB,'users',window.currentUserId,'chats'),orderBy('timestamp','desc'));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(docSnap=>{
+        const div=document.createElement('div');
+        div.className='chat-thread';
+        div.textContent = new Date(docSnap.data().timestamp.toDate ? docSnap.data().timestamp.toDate() : docSnap.data().timestamp).toLocaleString();
+        div.onclick=()=>openChat(docSnap.id);
+        chatHistoryDiv.appendChild(div);
+    });
+}
+
+async function openChat(chatId){
+    currentChatId = chatId;
+    chatBox.innerHTML='';
+    localMessages = [];
+    const docSnap = await getDoc(doc(window.firebaseDB,'users',window.currentUserId,'chats',chatId));
+    if(docSnap.exists()){
+        const messages = docSnap.data().messages || [];
+        messages.forEach(m=>displayMessage(m.text,m.sender,m.features||[]));
+        localMessages = messages;
+    }
+}
+
+// ----- EVENTS -----
+chatForm.addEventListener('submit',e=>{
+    e.preventDefault();
+    const msg = userInput.value.trim();
+    if(!msg) return;
+    displayMessage(msg,'user');
+    userInput.value='';
+    setTimeout(()=>{
+        const bot=getBotResponse(msg);
+        displayMessage(bot.msg,'bot',bot.features);
+    },400);
+});
+
+newChatBtn.addEventListener('click',()=>{
+    currentChatId = `chat_${Date.now()}`;
+    chatBox.innerHTML='';
+    localMessages=[];
+    displayMessage("Let's start fresh! How are you feeling today?",'bot');
+});
+
+exportChatBtn.addEventListener('click',()=>{
+    const text = localMessages.map(m=>`${m.sender.toUpperCase()}: ${m.text}`).join('\n');
+    const blob = new Blob([text], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`mindEase_chat_${new Date().toISOString()}.txt`; a.click();
+    URL.revokeObjectURL(url);
+});
+
+saveChatBtn.addEventListener('click',saveChatToFirebase);
+
+clearHistoryBtn.addEventListener('click',async ()=>{
+    if(!window.currentUserId) return;
+    const chatsCol = collection(window.firebaseDB,'users',window.currentUserId,'chats');
+    const q = query(chatsCol);
+    const docs = await getDocs(q);
+    docs.forEach(d=>deleteDoc(doc(chatsCol,d.id)));
+    chatBox.innerHTML='';
+    localMessages=[];
+    loadChatThreads();
+});
+
+fileInput.addEventListener('change',e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    displayMessage(`You shared an image: ${file.name}`,'user');
+    displayMessage("Nice, this fits your thought!",'bot');
+});
+
+// Start new chat on page load
+newChatBtn.click();
+</script>
+</body>
+</html>
