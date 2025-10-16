@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindEase</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+  --beige: #f5f1e8;
+  --text: #2b2b2b;
+  --accent: #b29b80;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"Poppins",sans-serif; background:var(--beige); color:var(--text); scroll-behavior:smooth; }
+
+/* Navbar */
+nav { display:flex; justify-content:space-between; align-items:center; padding:18px 60px; position:fixed; width:100%; top:0; left:0; background: rgba(255,255,255,0.4); backdrop-filter: blur(8px); z-index:100; }
+.logo { font-weight:600; font-size:22px; }
+.nav-links { display:flex; gap:30px; }
+.nav-links a { text-decoration:none; color:var(--text); transition:0.3s; }
+.nav-links a:hover { color:var(--accent); }
+.nav-links button { padding:6px 14px; border:none; border-radius:6px; background:var(--accent); color:#fff; cursor:pointer; font-weight:600; transition:0.3s; }
+.nav-links button:hover { background:#9b886e; }
+/* Hero */
+.hero { position:relative; height:60vh; display:flex; align-items:center; justify-content:center; text-align:center; overflow:hidden; }
+.hero img { width:100%; height:100%; object-fit:cover; filter: brightness(75%); }
+.overlay { position:absolute; inset:0; background: rgba(245,241,232,0.35); z-index:0; }
+.hero-content { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); max-width:700px; color:#fff; z-index:1; }
+.hero-content h1 { font-size:48px; font-weight:700; margin-bottom:15px; text-shadow: 2px 2px 8px rgba(0,0,0,0.5);}
+.hero-content p { font-size:20px; margin-bottom:20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.5);}
+.cta-button { display:inline-block; background:var(--accent); color:white; padding:12px 30px; border-radius:30px; font-weight:600; text-decoration:none; transition:all 0.3s ease; }
+.cta-button:hover { background:#9b886e; transform:translateY(-3px); }
+
+/* Features */
+#features { padding:100px 60px; text-align:center; }
+.features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:30px; max-width:1100px; margin:0 auto; }
+.feature-box { background:#fff; padding:30px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.05); transition:all 0.3s ease; text-decoration:none; color:var(--text);}
+.feature-box:hover { transform:translateY(-5px); box-shadow:0 15px 30px rgba(0,0,0,0.07);}
+.feature-box .icon { font-size:28px; color:var(--accent); margin-bottom:16px; }
+.feature-box h3 { font-size:20px; margin-bottom:10px; }
+.feature-box p { font-size:15px; line-height:1.6; }
+
+/* Blog */
+.blog-section { padding:100px 60px; text-align:center; background:#f7f4ec;}
+.blog-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:30px; max-width:1100px; margin:0 auto; }
+.blog-card { background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 6px 20px rgba(0,0,0,0.08); transition:0.3s;}
+.blog-card:hover { transform:translateY(-5px); box-shadow:0 12px 24px rgba(0,0,0,0.12);}
+.blog-card img { width:100%; height:180px; object-fit:cover; }
+.blog-content { padding:20px; text-align:left;}
+.blog-content h3 { font-size:20px; margin-bottom:10px;}
+.blog-content p { font-size:15px; line-height:1.5;}
+.read-more { text-decoration:none; color:var(--accent); font-weight:500; }
+.read-more:hover { color:#9b886e; }
+
+/* FAQ */
+.faq-section { padding:100px 60px; max-width:900px; margin:0 auto;}
+.faq-item { background:#fff; margin-bottom:18px; border-radius:16px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.05);}
+.faq-question { width:100%; background:none; border:none; padding:18px 20px; text-align:left; font-size:16px; font-weight:500; cursor:pointer; display:flex; justify-content:space-between; }
+.faq-answer { display:none; padding:0 20px 18px; font-size:15px; line-height:1.6;}
+.faq-item.active .faq-answer { display:block;}
+
+/* Footer */
+footer { text-align:center; padding:40px; font-size:14px; color:#777; background:#efe8dc; }
+
+/* Links reset */
+.feature-link { text-decoration:none; color:inherit; }
+
+/* Responsive */
+@media(max-width:768px){
+  nav{padding:14px 30px;}
+  .features-grid, .blog-grid { grid-template-columns:1fr; }
+}
+#loginModal { display:none; position:fixed; inset:0; background: rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:200; }
+.modal-content { background:#fff; padding:30px; border-radius:16px; width:320px; max-width:90%; text-align:center; position:relative; }
+.modal-content h2 { margin-bottom:20px; color:var(--accent); }
+.modal-content input { width:100%; padding:10px; margin:10px 0; border-radius:6px; border:1px solid #ccc; }
+.modal-content button { margin-top:10px; width:100%; padding:10px; background:var(--accent); color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
+.modal-content button:hover { background:#9b886e; }
+.close-btn { position:absolute; top:10px; right:10px; cursor:pointer; font-size:18px; }
+#error-msg { color:red; font-size:14px; margin-top:8px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">MindEase</div>
+  <div class="nav-links">
+    <a href="#home">Home</a>
+    <a href="#features">Features</a>
+    <a href="#blog">Blog</a>
+    <a href="#faq">FAQ</a>
+      <button id="loginBtn">Login</button>
+    <button id="logoutBtn" style="display:none;">Logout</button>
+
+  </div>
+</nav>
+<!-- Login Modal -->
+<div id="loginModal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2>Login / Sign Up</h2>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button id="signInBtn">Sign In</button>
+    <button id="signUpBtn">Sign Up</button>
+    <div id="error-msg"></div>
+  </div>
+</div>
+
+<!-- Hero -->
+<section id="home" class="hero">
+  <img src="bg.avif" alt="Clouds">
+  <div class="overlay"></div>
+  <div class="hero-content">
+    <h1 class="hero-quote">“Even the sky takes a pause to breathe between clouds.”</h1>
+    <a href="#" class="cta-button">Download MindEase Free</a>
+  </div>
+</section>
+
+<!-- Description & MINDEASE below photo -->
+<section class="hero-description">
+     <h2 class="hero-name">MINDEASE</h2>
+  <p class="description-text">Your gentle conversational companion, designed to bring calm, clarity, and peace of mind.</p>
+ 
+</section>
+
+<style>
+.hero-description {
+  text-align: center;
+  margin: 30px auto 60px;
+  max-width: 700px;
+}
+
+.description-text {
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: 15px;
+}
+
+.hero-name {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 2px;
+}
+</style>
+<section class="wellness-section">
+  <h2 class="wellness-heading">We're here to help you feel better</h2>
+
+  <div class="wellness-grid">
+    <!-- Sleep -->
+    <a href="sleep.html" class="wellness-box">
+      <div class="icon"><i class="fas fa-bed"></i></div>
+      <h3>Sleep more</h3>
+      <p>Fall asleep (and stay asleep) naturally and peacefully.</p>
+    </a>
+
+    <!-- Stress -->
+    <a href="stress.html" class="wellness-box">
+      <div class="icon"><i class="fas fa-brain"></i></div>
+      <h3>Stress less</h3>
+      <p>Get instant relief and learn to manage stress calmly.</p>
+    </a>
+
+    <!-- Mindful -->
+    <a href="mindful.html" class="wellness-box">
+      <div class="icon"><i class="fas fa-leaf"></i></div>
+      <h3>Live mindfully</h3>
+      <p>Navigate life's ups and downs with inner peace.</p>
+    </a>
+  </div>
+</section>
+
+<style>
+.wellness-section {
+  text-align: center;
+  background: #fffaf3;
+  padding: 100px 60px;
+}
+
+.wellness-heading {
+  font-size: 2.2rem;
+  color: #6b5b4b;
+  font-weight: 600;
+  margin-bottom: 60px;
+}
+
+.wellness-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.wellness-box {
+  background-color: #ffffff;
+  border-radius: 50%;
+  width: 220px;
+  height: 220px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+}
+
+.wellness-box:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.wellness-box .icon {
+  font-size: 40px;
+  color: #b29b80;
+  margin-bottom: 12px;
+}
+
+.wellness-box h3 {
+  font-size: 1.2rem;
+  color: #7a6652;
+  margin-bottom: 8px;
+}
+
+.wellness-box p {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .wellness-grid {
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+
+
+
+.content-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 30px;
+}
+
+.content-section h1 {
+  font-size: 2.5rem;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.content-section p, .content-section ul {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.image-section {
+  flex: 1;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.image-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.content-section input[type="number"] {
+  width: 80px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  margin-top: 10px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.content-section button {
+  padding: 8px 16px;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.content-section button:hover {
+  background-color: #9b886e;
+}
+
+#sleepResult {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #6b5b4b;
+}
+
+
+</style>
+
+
+
+<!-- Features -->
+<section id="features">
+  <h2>Unlock Your Inner Calm</h2>
+  <p>MindEase offers six unique tools to support your emotional journey.</p>
+
+  <div class="features-grid">
+  <a href="ai.html" class="feature-link">
+    <div class="feature-box">
+      <span class="icon"><i class="fas fa-heart"></i></span>
+      <h3>Emotional Companion</h3>
+      <p>A gentle AI that understands your emotions and responds with personalized, encouraging messages.</p>
+    </div>
+  </a>
+    <a href="doodle.html" class="feature-link">
+      <div class="feature-box">
+        <span class="icon"><i class="fas fa-paint-brush"></i></span>
+        <h3>Doodle Pad</h3>
+        <p>A visual outlet for when words fall short—draw, scribble, or express your feelings visually.</p>
+      </div>
+    </a>
+    <a href="journal.html" class="feature-link">
+      <div class="feature-box">
+        <span class="icon"><i class="fas fa-feather-alt"></i></span>
+        <h3>Journaling Space</h3>
+        <p>Write your thoughts freely, create multiple journals with names, and save them safely.</p>
+      </div>
+    </a>
+    
+ <a href="voice-memories.html" class="feature-link">
+  <div class="feature-box">
+    <span class="icon"><i class="fas fa-volume-up"></i></span>
+    <h3>Voice Memories</h3>
+    <p>Upload <br>and listen to cherished voice recordings of loved ones for comfort.</p>
+  </div>
+</a>
+
+    <a href="motivational-reads.html" class="feature-link">
+  <div class="feature-box">
+    <span class="icon"><i class="fas fa-book-open"></i></span>
+    <h3>Motivational Reads</h3>
+    <p>Short inspirational stories<br> to reignite positivity and hope within minutes.</p>
+  </div>
+</a>
+
+    <a href="relaxation-tools.html" class="feature-link">
+    <div class="feature-box">
+      <span class="icon"><i class="fas fa-leaf"></i></span>
+      <h3>Relaxation Tools</h3>
+      <p>Guided breathing, calming sounds, and mini-games to ease stress naturally.</p>
+    </div>
+  </div>
+</a>
+</section>
+
+<!-- Blog Section -->
+<section id="blog" class="blog-section">
+  <h2 class="blog-title">🌿 Featured Articles</h2>
+  <p class="blog-subtitle">Breathe. Reflect. Heal — one story at a time.</p>
+
+  <div class="blog-grid">
+    <!-- Blog 1 -->
+    <div class="blog-card">
+      <img src="mf.avif" alt="Mindful Breathing">
+      <div class="blog-content">
+        <h3>Mindful Breathing</h3>
+        <p>Learn the science behind deep breathing and how it calms your mind.</p>
+        <a href="blogs/blog1.html" class="read-more">Read More →</a>
+      </div>
+    </div>
+
+    <!-- Blog 2 -->
+    <div class="blog-card">
+      <img src="lfg.webp" alt="Letting Go of Control">
+      <div class="blog-content">
+        <h3>Letting Go of Control</h3>
+        <p>Acceptance brings peace. Discover how to surrender without losing strength.</p>
+        <a href="blogs/blog2.html" class="read-more">Read More →</a>
+      </div>
+    </div>
+
+    <!-- Blog 3 -->
+    <div class="blog-card">
+      <img src="dd.avif" alt="Digital Detox">
+      <div class="blog-content">
+        <h3>Digital Detox</h3>
+        <p>Unplug to reconnect — find clarity away from screens.</p>
+        <a href="blogs/blog3.html" class="read-more">Read More →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Blogs -->
+  <div class="blog-grid more-blogs hidden">
+    <div class="blog-card">
+      <img src="music.avif" alt="Healing Through Music">
+      <div class="blog-content">
+        <h3>Healing Through Music</h3>
+        <p>Discover how melodies can heal emotions and restore inner balance.</p>
+        <a href="blogs/blog4.html" class="read-more">Read More →</a>
+      </div>
+    </div>
+
+    <div class="blog-card">
+      <img src="sc.avif" alt="Building Self-Compassion">
+      <div class="blog-content">
+        <h3>Building Self-Compassion</h3>
+        <p>Be gentle with yourself. Growth starts with kindness from within.</p>
+        <a href="blogs/blog5.html" class="read-more">Read More →</a>
+      </div>
+    </div>
+
+    <div class="blog-card">
+      <img src="aolg.avif" alt="The Art of Slowing Down">
+      <div class="blog-content">
+        <h3>The Art of Slowing Down</h3>
+        <p>In a fast world, stillness is strength. Learn to embrace the pause.</p>
+        <a href="blogs/blog6.html" class="read-more">Read More →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="center-btn">
+    <button id="explore-btn" class="explore-btn">✨ Explore More</button>
+  </div>
+</section>
+
+
+
+<!-- FAQ -->
+<section id="faq" class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-item">
+    <button class="faq-question">🌸 What makes MindEase different?<i class="fas fa-chevron-down"></i></button>
+    <div class="faq-answer"><p>MindEase listens gently, adapts to your emotional tone, and suggests the right activity at the perfect moment.</p></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-question">🌿 How does Emotional Companion work?<i class="fas fa-chevron-down"></i></button>
+    <div class="faq-answer"><p>It analyzes tone, emotion, and context in your text or voice, then responds to comfort, uplift, or guide you toward calm.</p></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-question">🪷 Is my data private and secure?<i class="fas fa-chevron-down"></i></button>
+    <div class="faq-answer"><p>All your journaling and emotional data are stored locally by default — never shared.</p></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-question">☁️ Can I use MindEase offline?<i class="fas fa-chevron-down"></i></button>
+    <div class="faq-answer"><p>Core tools like journaling, doodle pad, and relaxation sounds work offline.</p></div>
+  </div>
+</section>
+
+<footer> <h3>MindEase</h3>
+  <p>Your gentle companion in the journey of mindfulness, calm, and relaxation.</p>
+  <div>
+    <a href="#"><i class="fab fa-facebook-f"></i></a>
+    <a href="#"><i class="fab fa-twitter"></i></a>
+    <a href="#"><i class="fab fa-instagram"></i></a>
+  </div>
+  <p>&copy; 2025 MindEase. All rights reserved.</p>
+</footer>
+
+
+<script>
+const faqItems = document.querySelectorAll(".faq-item");
+faqItems.forEach(item => {
+  const question = item.querySelector(".faq-question");
+  question.addEventListener("click", () => item.classList.toggle("active"));
+});
+</script>
+<script>
+  const sleepInput = document.getElementById('sleepHours');
+const checkBtn = document.getElementById('checkSleep');
+const sleepResult = document.getElementById('sleepResult');
+
+checkBtn.addEventListener('click', () => {
+  const hours = parseFloat(sleepInput.value);
+  if (isNaN(hours) || hours < 0 || hours > 24) {
+    sleepResult.textContent = "Please enter a valid number of hours between 0 and 24.";
+    return;
+  }
+
+  if (hours < 5) {
+    sleepResult.textContent = `You slept ${hours} hours. That's not enough sleep 😴. Try to get at least 7–9 hours for better health.`;
+  } else if (hours <= 7) {
+    sleepResult.textContent = `You slept ${hours} hours. Not bad, but aim for 7–9 hours to feel fully rested.`;
+  } else if (hours <= 9) {
+    sleepResult.textContent = `You slept ${hours} hours. Perfect! Your sleep duration is ideal 🌙.`;
+  } else {
+    sleepResult.textContent = `You slept ${hours} hours. That's more than recommended. Too much sleep can also affect your health.`;
+  }
+});
+
+  const exploreBtn = document.getElementById("explore-btn");
+  const moreBlogs = document.querySelector(".more-blogs");
+
+  exploreBtn.addEventListener("click", () => {
+    moreBlogs.classList.toggle("hidden");
+    exploreBtn.textContent = moreBlogs.classList.contains("hidden")
+      ? "✨ Explore More"
+      : "↑ Show Less";
+  });
+</script>
+<script type="module" src="firebase-auth.js"></script>
+
+</body>
+</html>
+
