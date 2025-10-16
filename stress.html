@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Stress - MindEase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --beige: #f5f1e8;
+      --text: #2b2b2b;
+      --accent: #b29b80;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:"Poppins",sans-serif; background:var(--beige); color:var(--text); line-height:1.6; }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 60px;
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(8px);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-weight: 600; font-size: 22px; }
+    .nav-links { display: flex; gap: 30px; }
+    .nav-links a { text-decoration: none; color: var(--text); transition:0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+
+    .container { max-width: 1200px; margin: 120px auto 60px; padding: 0 20px; display: flex; gap: 60px; flex-wrap: wrap; align-items: center; }
+    .text-section { flex: 1; min-width: 300px; }
+    .text-section h1 { font-size: 2.5rem; color: var(--accent); margin-bottom: 15px; }
+    .text-section blockquote { font-size: 1.2rem; color: #7a6652; font-style: italic; margin-bottom: 20px; }
+    .text-section p { margin-bottom: 30px; font-size: 1rem; color: #333; }
+
+    .image-section { flex: 1; min-width: 300px; text-align: center; }
+    .image-section img { width: 80%; border-radius: 20px; }
+
+    .stress-tracker { background:#fff; padding:30px; border-radius:20px; box-shadow:0 5px 20px rgba(0,0,0,0.05); max-width: 500px; }
+    .stress-tracker label { font-weight: 600; display:block; margin-bottom:10px; }
+    .stress-tracker input[type=range] { width: 100%; margin-bottom:15px; }
+    .stress-tracker button { background: var(--accent); color: #fff; padding: 12px 25px; border:none; border-radius: 25px; cursor:pointer; font-weight:600; transition:0.3s; }
+    .stress-tracker button:hover { background:#9b886e; transform:translateY(-2px); }
+    .result { margin-top:15px; font-weight:600; color:#555; }
+
+    @media(max-width: 768px){
+      .container { flex-direction: column; }
+      .image-section img { margin-top: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">MindEase</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="#tracker">Stress Tracker</a>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- Text section -->
+  <div class="text-section">
+    <h1>Manage Your Stress</h1>
+    <blockquote>"It's not the load that breaks you, it's the way you carry it." – Lou Holtz</blockquote>
+    <p>Stress affects both your body and mind. Learning to manage stress can boost immunity, improve mood, and enhance focus. Recognizing stress levels and taking proactive steps like breathing exercises, meditation, or short breaks can greatly improve your daily life.</p>
+
+    <!-- Stress Tracker -->
+    <div class="stress-tracker" id="tracker">
+      <label for="stress-level">Rate your current stress level (1–10):</label>
+      <input type="range" id="stress-level" min="1" max="10" value="5">
+      <button onclick="checkStress()">Check Stress</button>
+      <div class="result" id="result"></div>
+    </div>
+  </div>
+
+  <!-- Image section -->
+  <div class="image-section">
+    <img src="stresss.avif" alt="Person relaxing">
+  </div>
+</div>
+
+<script>
+  function checkStress() {
+    const level = document.getElementById('stress-level').value;
+    const result = document.getElementById('result');
+    const l = parseInt(level);
+
+    if(l <= 3) result.textContent = "You're feeling calm. Keep up your stress-free habits!";
+    else if(l >= 4 && l <= 6) result.textContent = "Moderate stress. Consider taking short breaks or deep breaths.";
+    else if(l >= 7 && l <= 8) result.textContent = "High stress! Try relaxation techniques or a short walk.";
+    else result.textContent = "Very high stress! It's time to pause, breathe deeply, and take care of yourself.";
+  }
+</script>
+
+</body>
+</html>

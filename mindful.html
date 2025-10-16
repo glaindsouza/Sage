@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mindfulness - MindEase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --beige: #f5f1e8;
+      --text: #2b2b2b;
+      --accent: #b29b80;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:"Poppins",sans-serif; background:var(--beige); color:var(--text); line-height:1.6; }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 60px;
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(8px);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-weight: 600; font-size: 22px; }
+    .nav-links { display: flex; gap: 30px; }
+    .nav-links a { text-decoration: none; color: var(--text); transition:0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+
+    .container { max-width: 1200px; margin: 120px auto 60px; padding: 0 20px; display: flex; gap: 60px; flex-wrap: wrap; align-items: center; }
+    .text-section { flex: 1; min-width: 300px; }
+    .text-section h1 { font-size: 2.5rem; color: var(--accent); margin-bottom: 15px; }
+    .text-section blockquote { font-size: 1.2rem; color: #7a6652; font-style: italic; margin-bottom: 20px; }
+    .text-section p { margin-bottom: 30px; font-size: 1rem; color: #333; }
+
+    .image-section { flex: 1; min-width: 300px; text-align: center; }
+    .image-section img { width: 80%; border-radius: 20px; }
+
+    .mindful-timer { background:#fff; padding:30px; border-radius:20px; box-shadow:0 5px 20px rgba(0,0,0,0.05); max-width: 500px; text-align:center; }
+    .mindful-timer button { background: var(--accent); color: #fff; padding: 12px 25px; border:none; border-radius: 25px; cursor:pointer; font-weight:600; transition:0.3s; margin-top:15px; }
+    .mindful-timer button:hover { background:#9b886e; transform:translateY(-2px); }
+    .timer-display { font-size: 2rem; margin-top: 20px; color:#555; }
+    .breath-action { font-size: 1.3rem; color: #b29b80; margin-top: 15px; font-weight: 500; }
+
+    @media(max-width: 768px){
+      .container { flex-direction: column; }
+      .image-section img { margin-top: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">MindEase</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="#timer">Mindfulness Timer</a>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- Text section -->
+  <div class="text-section">
+    <h1>Practice Mindfulness</h1>
+    <blockquote>"Mindfulness is the aware, balanced acceptance of the present experience." – Tara Brach</blockquote>
+    <p>Mindfulness helps you navigate life with clarity, calm, and confidence. By observing your thoughts without judgment, you reduce stress, improve focus, and enhance emotional resilience. Even a few minutes daily can positively impact your mental well-being.</p>
+
+    <!-- Mindfulness Timer -->
+    <div class="mindful-timer" id="timer">
+      <p>Try a 1-minute mindful breathing exercise:</p>
+      <button onclick="startBreathing()">Start Breathing</button>
+      <div class="timer-display" id="timerDisplay">01:00</div>
+      <div class="breath-action" id="breathAction">Ready?</div>
+    </div>
+  </div>
+
+  <!-- Image section -->
+  <div class="image-section">
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80" alt="Person meditating">
+  </div>
+</div>
+
+<script>
+  let breathingInterval;
+
+  function startBreathing() {
+    clearInterval(breathingInterval);
+    const display = document.getElementById('timerDisplay');
+    const action = document.getElementById('breathAction');
+    let totalTime = 60; // 1 minute
+    let timeLeft = totalTime;
+
+    const cycle = ['Breathe In', 'Hold', 'Breathe Out']; // 4-4-4 pattern (4s each)
+    let cycleIndex = 0;
+    let cycleTime = 4; // seconds per action
+    let cycleCounter = cycleTime;
+
+    display.textContent = formatTime(timeLeft);
+    action.textContent = cycle[cycleIndex];
+
+    breathingInterval = setInterval(() => {
+      // Countdown total time
+      timeLeft--;
+      display.textContent = formatTime(timeLeft);
+
+      // Countdown action cycle
+      cycleCounter--;
+      if(cycleCounter === 0) {
+        cycleIndex = (cycleIndex + 1) % cycle.length;
+        action.textContent = cycle[cycleIndex];
+        cycleCounter = cycleTime;
+      }
+
+      // End of timer
+      if(timeLeft <= 0) {
+        clearInterval(breathingInterval);
+        display.textContent = "00:00";
+        action.textContent = "Well done! Take a deep breath and smile 😊";
+      }
+    }, 1000);
+  }
+
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60).toString().padStart(2,'0');
+    const s = (seconds % 60).toString().padStart(2,'0');
+    return `${m}:${s}`;
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Journaling Space</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #fff5e6;
+  color: #2b2b2b;
+  margin: 0;
+  padding: 0;
+}
+header {
+  text-align: center;
+  padding: 30px 20px;
+}
+header h1 { font-size: 36px; margin-bottom: 5px; color:#b29b80;}
+header p { font-size: 18px; color:#4f4f4f; }
+
+.journal-container { max-width:900px; margin: 0 auto; padding:20px; }
+.journal-controls { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.journal-controls input {
+  padding:8px 12px;
+  border-radius:12px;
+  border:1px solid #ccc;
+  font-size:14px;
+  flex:1;
+}
+.journal-controls select {
+  padding:8px 12px;
+  border-radius:12px;
+  border:1px solid #ccc;
+  font-size:14px;
+}
+.journal-controls button {
+  padding:8px 15px;
+  border:none;
+  border-radius:12px;
+  background:#b29b80;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.3s;
+}
+.journal-controls button:hover { background:#9b886e; transform:translateY(-2px); }
+
+.journal-list { display:flex; gap:10px; margin-bottom:20px; overflow-x:auto; }
+.journal-card {
+  padding:10px 20px;
+  border-radius:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  cursor:pointer;
+  flex-shrink:0;
+  transition: transform 0.3s, box-shadow 0.3s;
+  font-weight:600;
+}
+.journal-card.active {
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+  transform:translateY(-2px);
+}
+
+textarea {
+  width:100%;
+  min-height:250px;
+  padding:20px;
+  border-radius:15px;
+  border:none;
+  font-size:16px;
+  line-height:1.5;
+  box-shadow:0 5px 15px rgba(0,0,0,0.05);
+  resize:none;
+  background: rgba(255,255,255,0.9);
+}
+
+.saved-entries { margin-top:20px; }
+.entry { background:#fff8f0; padding:15px; border-radius:12px; margin-bottom:10px; box-shadow:0 3px 10px rgba(0,0,0,0.08); position:relative; }
+.entry-date { font-size:12px; color:#777; margin-bottom:8px; }
+.entry-edit { position:absolute; top:10px; right:10px; background:#b29b80; color:white; border:none; border-radius:50%; width:25px; height:25px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; }
+.entry-edit:hover { background:#9b886e; }
+.color-theme { width:25px; height:25px; border-radius:50%; cursor:pointer; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.2); margin-right:5px; }
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Journaling Space</h1>
+  <p>Create journals, save entries with date & time, customize colors, and edit anytime.</p>
+</header>
+
+<div class="journal-container">
+
+  <div class="journal-controls">
+    <input type="text" id="newJournalName" placeholder="Enter new journal name">
+    <select id="journalColor">
+      <option value="#ffadad">Red</option>
+      <option value="#ffd6a5">Orange</option>
+      <option value="#fdffb6">Yellow</option>
+      <option value="#caffbf">Green</option>
+      <option value="#9bf6ff">Blue</option>
+      <option value="#a0c4ff">Purple</option>
+      <option value="#bdb2ff">Lavender</option>
+    </select>
+    <button id="addJournalBtn">Add Journal</button>
+  </div>
+
+  <div class="journal-list" id="journalList"></div>
+
+  <textarea id="journalText" placeholder="Start writing your thoughts here..."></textarea>
+  <br>
+  <button id="saveBtn">Save Entry</button>
+
+  <div class="saved-entries" id="savedEntries"></div>
+</div>
+
+<script>
+let journals = [];
+let currentJournal = null;
+
+// Render journal cards
+function renderJournals() {
+  const list = document.getElementById('journalList');
+  list.innerHTML = '';
+  journals.forEach((j, idx) => {
+    const card = document.createElement('div');
+    card.className = 'journal-card';
+    card.style.background = j.color;
+    card.style.color = '#fff';
+    if(idx === currentJournal) card.classList.add('active');
+    card.textContent = j.title;
+    card.onclick = () => {
+      currentJournal = idx;
+      document.getElementById('journalText').value = '';
+      displayEntries();
+      renderJournals();
+    };
+    list.appendChild(card);
+  });
+}
+
+// Display saved entries
+function displayEntries() {
+  const saved = document.getElementById('savedEntries');
+  saved.innerHTML = '';
+  if(currentJournal !== null) {
+    journals[currentJournal].entries.forEach((entry, idx) => {
+      const div = document.createElement('div');
+      div.className = 'entry';
+      div.style.background = journals[currentJournal].color + '33'; // transparent background of color
+      const date = document.createElement('div');
+      date.className = 'entry-date';
+      date.textContent = entry.date;
+      const content = document.createElement('div');
+      content.className = 'entry-content';
+      content.textContent = entry.text;
+      const editBtn = document.createElement('button');
+      editBtn.className = 'entry-edit';
+      editBtn.innerHTML = '✎';
+      editBtn.onclick = () => editEntry(idx);
+      div.appendChild(date);
+      div.appendChild(content);
+      div.appendChild(editBtn);
+      saved.appendChild(div);
+    });
+  }
+}
+
+// Add new journal
+document.getElementById('addJournalBtn').addEventListener('click', () => {
+  const name = document.getElementById('newJournalName').value.trim();
+  const color = document.getElementById('journalColor').value;
+  if(name) {
+    journals.push({ title: name, color: color, entries: [] });
+    currentJournal = journals.length - 1;
+    document.getElementById('newJournalName').value = '';
+    renderJournals();
+    displayEntries();
+  }
+});
+
+// Save entry
+document.getElementById('saveBtn').addEventListener('click', () => {
+  const text = document.getElementById('journalText').value.trim();
+  if(currentJournal !== null && text) {
+    const now = new Date();
+    journals[currentJournal].entries.push({
+      text: text,
+      date: now.toLocaleString()
+    });
+    displayEntries();
+    document.getElementById('journalText').value = '';
+  }
+});
+
+// Edit entry
+function editEntry(idx) {
+  const entry = journals[currentJournal].entries[idx];
+  const newText = prompt('Edit your entry:', entry.text);
+  if(newText !== null) {
+    journals[currentJournal].entries[idx].text = newText;
+    displayEntries();
+  }
+}
+</script>
+</body>
+</html>

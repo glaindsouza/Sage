@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindEase - Voice Memories</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+    --beige: #f5f1e8;
+    --text: #2b2b2b;
+    --accent: #b29b80;
+    --light: #fff;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"Poppins",sans-serif; background:var(--beige); color:var(--text); }
+
+nav {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 60px; background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(8px);
+}
+.logo { font-weight:600; font-size:22px; }
+.nav-links a { margin-left:20px; text-decoration:none; color:var(--text); font-weight:500; }
+.nav-links a:hover { color:var(--accent); }
+
+header { text-align:center; padding:60px 20px; }
+header h1 { font-size:36px; margin-bottom:10px; }
+header p { font-size:18px; color:#555; }
+
+.container { max-width:900px; margin:0 auto; padding:20px; }
+
+.memory-upload {
+    display:flex; flex-direction:column; gap:15px; margin-bottom:30px;
+}
+.memory-upload input[type="file"], .memory-upload input[type="text"] {
+    padding:10px; border-radius:8px; border:1px solid #ccc;
+}
+.memory-upload button {
+    background:var(--accent); color:white; border:none; padding:10px 20px;
+    border-radius:25px; cursor:pointer; font-weight:600;
+}
+.memory-upload button:hover { background:#9b886e; }
+
+#waveform { width:100%; margin-top:20px; }
+.controls { display:flex; gap:10px; margin-top:10px; }
+.controls button {
+    background:var(--accent); color:white; border:none; padding:6px 12px; border-radius:15px; cursor:pointer;
+}
+.controls button:hover { background:#9b886e; }
+
+.memory-list { display:flex; flex-direction:column; gap:20px; }
+.memory-card {
+    background:var(--light); padding:15px 20px; border-radius:15px; box-shadow:0 8px 20px rgba(0,0,0,0.08);
+    display:flex; flex-direction:column; gap:10px;
+}
+.memory-card h3 { font-size:18px; }
+.memory-card audio { width:100%; outline:none; }
+.memory-card .info { display:flex; justify-content:space-between; font-size:14px; color:#555; }
+.memory-card button {
+    background:#b29b80; color:white; border:none; padding:6px 12px; border-radius:15px; cursor:pointer;
+}
+.memory-card button:hover { background:#9b886e; }
+
+footer { text-align:center; padding:30px; color:#777; background:#efe8dc; margin-top:40px; }
+
+</style>
+<!-- Wavesurfer.js CDN -->
+<script src="https://unpkg.com/wavesurfer.js"></script>
+<script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="logo">MindEase</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+  </div>
+</nav>
+
+<header>
+    <h1>Voice Memories</h1>
+    <p>Save and cherish the voice recordings of your loved ones. Trim, name, and replay anytime!</p>
+</header>
+
+<div class="container">
+
+<div class="memory-upload">
+    <input type="file" id="audioFile" accept="audio/*">
+    <input type="text" id="memoryName" placeholder="Enter memory name">
+    <div id="waveform"></div>
+    <div class="controls">
+        <button id="playPause">Play/Pause</button>
+        <button id="saveMemory">Save Trimmed Memory</button>
+    </div>
+</div>
+
+<div class="memory-list" id="memoryList">
+    <!-- Saved voice memories will appear here -->
+</div>
+
+</div>
+
+<footer>© 2025 MindEase | Hackathon Project</footer>
+
+<script>
+let memories = JSON.parse(localStorage.getItem("voiceMemories") || "[]");
+const memoryList = document.getElementById("memoryList");
+displayMemories();
+
+// Wavesurfer setup
+let wavesurfer = WaveSurfer.create({
+    container: '#waveform',
+    waveColor: '#b29b80',
+    progressColor: '#9b886e',
+    height: 100,
+    responsive: true,
+    plugins: [
+        WaveSurfer.regions.create({})
+    ]
+});
+
+document.getElementById("audioFile").addEventListener("change", (e)=>{
+    const file = e.target.files[0];
+    if(file){
+        wavesurfer.load(URL.createObjectURL(file));
+        wavesurfer.on('ready', ()=>{
+            // Create initial full-length region
+            wavesurfer.clearRegions();
+            wavesurfer.addRegion({start:0, end:wavesurfer.getDuration(), color:'rgba(178,155,128,0.3)'});
+        });
+    }
+});
+
+document.getElementById("playPause").addEventListener("click", ()=>{
+    wavesurfer.playPause();
+});
+
+document.getElementById("saveMemory").addEventListener("click", ()=>{
+    const nameInput = document.getElementById("memoryName");
+    if(!nameInput.value.trim()){ alert("Please enter a memory name!"); return; }
+    const region = Object.values(wavesurfer.regions.list)[0];
+    if(!region){ alert("No region selected!"); return; }
+
+    wavesurfer.exportPCM(region.start, region.end, 44100, true).then(blobData=>{
+        const url = URL.createObjectURL(blobData);
+        memories.push({name:nameInput.value, data:url, date:new Date().toLocaleString()});
+        localStorage.setItem("voiceMemories", JSON.stringify(memories));
+        displayMemories();
+        nameInput.value=""; wavesurfer.empty();
+    });
+});
+
+// Display saved memories
+function displayMemories(){
+    memoryList.innerHTML="";
+    memories.forEach((mem,index)=>{
+        const card = document.createElement("div");
+        card.className="memory-card";
+        card.innerHTML=`
+            <h3>${mem.name}</h3>
+            <audio controls src="${mem.data}"></audio>
+            <div class="info">
+                <span>${mem.date}</span>
+                <button onclick="deleteMemory(${index})">Delete</button>
+            </div>
+        `;
+        memoryList.appendChild(card);
+    });
+}
+
+function deleteMemory(index){
+    memories.splice(index,1);
+    localStorage.setItem("voiceMemories", JSON.stringify(memories));
+    displayMemories();
+}
+</script>
+
+</body>
+</html>

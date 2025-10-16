@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relaxation Tools | MindEase</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+  --beige: #f5f1e8;
+  --text: #2b2b2b;
+  --accent: #b29b80;
+}
+
+body {
+  font-family:"Poppins",sans-serif;
+  margin:0;
+  background:var(--beige);
+  color:var(--text);
+}
+
+/* Navbar */
+nav {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 60px;
+  background: rgba(255,255,255,0.4);
+  backdrop-filter: blur(8px);
+  position:fixed;
+  width:100%;
+  top:0;
+  left:0;
+  z-index:100;
+}
+.logo { font-weight:600; font-size:22px; }
+.nav-links { display:flex; gap:20px; }
+.nav-links a { text-decoration:none; color:var(--text); font-weight:500; }
+.nav-links a:hover { color:var(--accent); }
+
+/* Hero */
+.hero {
+  position: relative;
+  height:50vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  margin-top:60px;
+}
+.hero img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter: brightness(70%);
+}
+.overlay {
+  position:absolute;
+  inset:0;
+  background: rgba(245,241,232,0.35);
+}
+.hero-content {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  color:#fff;
+  z-index:1;
+}
+.hero-content h1 { font-size:40px; text-shadow:2px 2px 8px rgba(0,0,0,0.5); }
+
+/* Tools Section */
+.tools-section {
+  padding:80px 20px;
+  max-width:1100px;
+  margin:0 auto;
+}
+.tools-section h2 {
+  text-align:center;
+  font-size:2.2rem;
+  color: var(--accent);
+  margin-bottom:40px;
+}
+.tools-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:30px;
+}
+.tool-card {
+  background:#fff;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+  text-align:center;
+  transition:all 0.3s ease;
+}
+.tool-card:hover { transform:translateY(-5px); box-shadow:0 15px 30px rgba(0,0,0,0.07); }
+.tool-card .icon { font-size:40px; color:var(--accent); margin-bottom:15px; }
+.tool-card h3 { font-size:1.5rem; margin-bottom:10px; }
+.tool-card p { font-size:1rem; line-height:1.5; margin-bottom:15px; }
+.tool-card button {
+  padding:8px 14px;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+}
+.tool-card button:hover { background:#9b886e; }
+
+/* Breathing Circle */
+.breathing-circle {
+  width:150px;
+  height:150px;
+  border:5px solid var(--accent);
+  border-radius:50%;
+  margin:20px auto;
+  display:none;
+  animation: none;
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
+
+/* Footer */
+footer {
+  text-align:center;
+  padding:40px 20px;
+  background:#efe8dc;
+  color:#777;
+  margin-top:50px;
+}
+footer a { margin:0 10px; color:#777; text-decoration:none; }
+footer a:hover { color:var(--accent); }
+
+/* Responsive */
+@media(max-width:768px){
+  nav{padding:14px 20px;}
+  .tools-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <div class="logo">MindEase</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="doodle.html">Doodle</a>
+    <a href="journal.html">Journal</a>
+    <a href="relaxation-tools.html">Relaxation</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80" alt="Relaxation">
+  <div class="overlay"></div>
+  <div class="hero-content">
+    <h1>Relaxation Tools</h1>
+    <p>Choose the right tool based on how you feel today.</p>
+  </div>
+</section>
+
+<!-- Tools Section -->
+<section class="tools-section">
+  <h2>Tools for Emotional Relief</h2>
+  <div class="tools-grid">
+
+    <!-- Depression -->
+    <div class="tool-card">
+      <div class="icon"><i class="fas fa-smile-beam"></i></div>
+      <h3>Feeling Low / Depression</h3>
+      <p>Boost your mood with uplifting sounds and mini positivity exercises.</p>
+      <button onclick="ambient.mp3">Play Mood Booster</button>
+    </div>
+
+    <!-- Anxiety -->
+    <div class="tool-card">
+      <div class="icon"><i class="fas fa-brain"></i></div>
+      <h3>Anxiety</h3>
+      <p>Calm your mind with guided breathing and soft relaxing audio.</p>
+      <button onclick="startBreathing()">Start Breathing Exercise</button>
+      <div class="breathing-circle" id="circle"></div>
+    </div>
+
+    <!-- Panic Attack -->
+    <div class="tool-card">
+      <div class="icon"><i class="fas fa-heartbeat"></i></div>
+      <h3>Panic Attack</h3>
+      <p>Ground yourself quickly with 5-4-3-2-1 technique and calming sounds.</p>
+      <button onclick="panicRelief()">Panic Relief</button>
+    </div>
+
+    <!-- Emotional Distress -->
+    <div class="tool-card">
+      <div class="icon"><i class="fas fa-leaf"></i></div>
+      <h3>Emotional Distress</h3>
+      <p>Play calming mini-games or soothing music to relieve emotional tension.</p>
+      <button onclick="playMiniGame()">Play Mini Game</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2025 MindEase. All rights reserved.</p>
+  <div>
+    <a href="#"><i class="fab fa-facebook-f"></i></a>
+    <a href="#"><i class="fab fa-twitter"></i></a>
+    <a href="#"><i class="fab fa-instagram"></i></a>
+  </div>
+</footer>
+
+<script>
+// Breathing Exercise
+function startBreathing(){
+  const circle = document.getElementById("circle");
+  circle.style.display = "block";
+  circle.style.animation = "breathe 4s infinite ease-in-out";
+  alert("Follow the circle: Inhale (4s) → Hold (7s) → Exhale (8s)");
+}
+
+// Mood booster sound
+function playMoodSound(){
+  const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+  audio.play();
+  alert("Playing uplifting audio for mood boost!");
+}
+
+// Panic relief (5-4-3-2-1 grounding)
+function panicRelief(){
+  alert("Focus on 5 things you see, 4 things you touch, 3 things you hear, 2 things you smell, 1 thing you taste. Breathe deeply.");
+  const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3');
+  audio.play();
+}
+
+// Mini game placeholder
+function playMiniGame(){
+  alert("Launching a stress-free mini-game (placeholder)...");
+}
+</script>
+
+</body>
+</html>

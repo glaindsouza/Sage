@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sleep Well - MindEase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --beige: #f5f1e8;
+      --text: #2b2b2b;
+      --accent: #b29b80;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:"Poppins",sans-serif; background:var(--beige); color:var(--text); line-height:1.6; }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 60px;
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(8px);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-weight: 600; font-size: 22px; }
+    .nav-links { display: flex; gap: 30px; }
+    .nav-links a { text-decoration: none; color: var(--text); transition:0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+
+    .container { max-width: 1200px; margin: 120px auto 60px; padding: 0 20px; display: flex; gap: 60px; flex-wrap: wrap; align-items: center; }
+    .text-section { flex: 1; min-width: 300px; }
+    .text-section h1 { font-size: 2.5rem; color: var(--accent); margin-bottom: 15px; }
+    .text-section blockquote { font-size: 1.2rem; color: #7a6652; font-style: italic; margin-bottom: 20px; }
+    .text-section p { margin-bottom: 30px; font-size: 1rem; color: #333; }
+
+    .image-section { flex: 1; min-width: 300px; }
+    .image-section img { width: 100%; border-radius: 20px; }
+
+    .sleep-tracker { background:#fff; padding:30px; border-radius:20px; box-shadow:0 5px 20px rgba(0,0,0,0.05); max-width: 500px; }
+    .sleep-tracker label { font-weight: 600; display:block; margin-bottom:10px; }
+    .sleep-tracker input[type=number] { width: 100%; padding: 10px; border-radius:8px; border:1px solid #ccc; margin-bottom:15px; }
+    .sleep-tracker button { background: var(--accent); color: #fff; padding: 12px 25px; border:none; border-radius: 25px; cursor:pointer; font-weight:600; transition:0.3s; }
+    .sleep-tracker button:hover { background:#9b886e; transform:translateY(-2px); }
+    .result { margin-top:15px; font-weight:600; color:#555; }
+
+    @media(max-width: 768px){
+      .container { flex-direction: column; }
+      .image-section img { margin-top: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">MindEase</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="#tracker">Sleep Tracker</a>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- Text section -->
+  <div class="text-section">
+    <h1>Sleep is a Necessity</h1>
+    <blockquote>"A good laugh and a long sleep are the best cures in the doctor's book." – Irish Proverb</blockquote>
+    <p>Sleep is essential for physical health, emotional well-being, and cognitive function. Adults typically need 7–9 hours of sleep per night to maintain optimal health. Proper sleep helps memory, improves mood, and reduces stress levels, while chronic sleep deprivation can lead to serious health issues.</p>
+
+    <!-- Sleep Tracker -->
+    <div class="sleep-tracker" id="tracker">
+      <label for="hours">How many hours did you sleep last night?</label>
+      <input type="number" id="hours" placeholder="Enter hours..." min="0" max="24">
+      <button onclick="checkSleep()">Check Sleep</button>
+      <div class="result" id="result"></div>
+    </div>
+  </div>
+
+  <!-- Image section -->
+  <div class="image-section">
+    <img src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=900&q=80" alt="Person sleeping">
+  </div>
+</div>
+
+<script>
+  function checkSleep() {
+    const hours = document.getElementById('hours').value;
+    const result = document.getElementById('result');
+    if(hours === '') {
+      result.textContent = "Please enter the number of hours you slept.";
+      return;
+    }
+
+    const h = parseFloat(hours);
+    if(h < 5) result.textContent = "That's too little sleep. Try to rest more tonight.";
+    else if(h >= 5 && h < 7) result.textContent = "Not bad, but you can sleep a bit longer for optimal health.";
+    else if(h >= 7 && h <= 9) result.textContent = "Great! You got the recommended amount of sleep.";
+    else result.textContent = "That's quite a lot! Make sure you maintain a healthy sleep routine.";
+  }
+</script>
+
+</body>
+</html>

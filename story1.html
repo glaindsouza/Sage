@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Power of Persistence - MindEase</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+  --bg: #f5f1e8;
+  --card-bg: #ffffff;
+  --text: #2b2b2b;
+  --accent: #b29b80;
+  --secondary: #555;
+  --soft-shadow: rgba(0,0,0,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif; }
+
+body { background: var(--bg); color: var(--text); min-height:100vh; line-height:1.7; }
+
+nav {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:18px 60px; background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(8px);
+}
+nav .logo { font-weight:600; font-size:22px; }
+nav .nav-links a { text-decoration:none; margin-left:20px; color: var(--text); transition:0.3s; }
+nav .nav-links a:hover { color: var(--accent); }
+
+.story-container {
+  max-width:800px; margin:80px auto 40px; padding:20px; background: var(--card-bg);
+  border-radius:20px; box-shadow:0 10px 25px var(--soft-shadow);
+}
+
+.story-container h1 { font-size:32px; color: var(--accent); margin-bottom:15px; text-align:center; }
+.story-container p { font-size:18px; color: #333; margin-bottom:18px; text-align:justify; }
+.story-container img { width:100%; border-radius:16px; margin-bottom:20px; }
+
+.story-buttons { display:flex; justify-content:space-between; margin-top:20px; }
+.story-buttons button {
+  background: var(--accent); color:white; border:none; padding:10px 20px; border-radius:25px;
+  font-weight:500; cursor:pointer; transition:0.3s;
+}
+.story-buttons button:hover { background:#9b886e; }
+
+footer { text-align:center; padding:40px; font-size:14px; color:#777; background:#efe8dc; margin-top:40px; }
+
+@media(max-width:768px){
+  nav{padding:14px 20px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">MindEase</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="motivational.html">Motivational Reads</a>
+  </div>
+</nav>
+
+<section class="story-container">
+  <h1>The Power of Persistence</h1>
+  
+  <p><b>Summary:</b> Thomas Edison failed thousands of times before inventing the light bulb. Persistence is key to success. This story shows how determination can overcome repeated failure and lead to breakthroughs.</p>
+  
+  <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80" alt="Persistence Image">
+  
+  <p>Thomas Edison’s journey is a classic example of the power of persistence. While attempting to invent the electric light, he failed over 1,000 times. When asked about his repeated failures, Edison famously replied, “I have not failed. I've just found 10,000 ways that won’t work.”</p>
+  
+  <p>His unwavering determination and belief in his vision eventually led to the successful creation of the light bulb. This story teaches us that setbacks are not the end; they are stepping stones toward achieving our goals.</p>
+  
+  <p>Whether in studies, career, or personal growth, embracing failure as a teacher rather than a deterrent allows us to keep moving forward. Persistence transforms challenges into triumphs, proving that the journey is just as valuable as the destination.</p>
+  
+  <div class="story-buttons">
+    <button onclick="alert('Added to Favorites!')"><i class="fas fa-heart"></i> Favorite</button>
+    <button onclick="window.location.href='motivational.html'"><i class="fas fa-arrow-left"></i> Back</button>
+  </div>
+</section>
+
+<footer>© 2025 MindEase | Designed for Hackathon Presentation</footer>
+
+</body>
+</html>

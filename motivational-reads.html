@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindEase - Motivational Reads</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+  --bg: #f5f1e8;
+  --card-bg: #ffffff;
+  --text: #2b2b2b;
+  --accent: #b29b80;
+  --secondary: #555;
+  --soft-shadow: rgba(0,0,0,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif; }
+
+body { background: var(--bg); color: var(--text); min-height:100vh; }
+
+nav {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:18px 60px; background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(8px);
+}
+nav .logo { font-weight:600; font-size:22px; }
+nav .nav-links a { text-decoration:none; margin-left:20px; color: var(--text); transition:0.3s; }
+nav .nav-links a:hover { color: var(--accent); }
+
+.page-header {
+  text-align:center; padding:60px 20px;
+}
+.page-header h1 { font-size:48px; margin-bottom:15px; color: var(--text);}
+.page-header p { font-size:18px; color: var(--secondary); }
+
+.stories-container {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr));
+  gap:25px; max-width:1100px; margin:0 auto; padding-bottom:60px;
+}
+
+.story-card {
+  background: var(--card-bg); padding:20px; border-radius:20px;
+  box-shadow: 0 10px 25px var(--soft-shadow); transition:0.3s; display:flex; flex-direction:column;
+}
+.story-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px var(--soft-shadow); }
+.story-card h3 { font-size:20px; margin-bottom:10px; color: var(--accent); font-weight:600; cursor:pointer; }
+.story-card p { font-size:15px; line-height:1.5; color:#333; margin-bottom:15px; }
+
+.story-card .buttons {
+  display:flex; justify-content:space-between;
+}
+.story-card button {
+  background: var(--accent); color:white; border:none; padding:8px 16px; border-radius:25px;
+  font-weight:500; cursor:pointer; transition:0.3s;
+}
+.story-card button:hover { background:#9b886e; }
+
+footer { text-align:center; padding:40px; font-size:14px; color:#777; background:#efe8dc; margin-top:40px; }
+
+@media(max-width:768px){
+  nav{padding:14px 20px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">MindEase</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="journal.html">Journal</a>
+    <a href="doodle.html">Doodle</a>
+    <a href="voice.html">Voice Memories</a>
+    <a href="#">Motivational Reads</a>
+  </div>
+</nav>
+
+<section class="page-header">
+  <h1>Motivational Reads</h1>
+  <p>Discover inspirational stories to uplift your spirit. Tap a story to read full content.</p>
+</section>
+
+<section class="stories-container">
+  <!-- Story 1 -->
+  <div class="story-card">
+    <h3 onclick="window.location.href='story1.html'">The Power of Persistence</h3>
+    <p>Thomas Edison failed thousands of times before inventing the light bulb. Persistence is key to success.</p>
+    <div class="buttons">
+      <button onclick="alert('Added to Favorites!')"><i class="fas fa-heart"></i> Favorite</button>
+      <button onclick="window.location.href='explore.html'"><i class="fas fa-search"></i> Explore</button>
+    </div>
+  </div>
+
+  <!-- Story 2 -->
+  <div class="story-card">
+    <h3 onclick="window.location.href='story2.html'">Believe in Yourself</h3>
+    <p>J.K. Rowling faced multiple rejections before Harry Potter became a global phenomenon. Never stop believing.</p>
+    <div class="buttons">
+      <button onclick="alert('Added to Favorites!')"><i class="fas fa-heart"></i> Favorite</button>
+      <button onclick="window.location.href='explore.html'"><i class="fas fa-search"></i> Explore</button>
+    </div>
+  </div>
+
+  <!-- Story 3 -->
+  <div class="story-card">
+    <h3 onclick="window.location.href='story3.html'">Strength in Adversity</h3>
+    <p>Helen Keller overcame blindness and deafness to inspire millions. Challenges can become your greatest strength.</p>
+    <div class="buttons">
+      <button onclick="alert('Added to Favorites!')"><i class="fas fa-heart"></i> Favorite</button>
+      <button onclick="window.location.href='explore.html'"><i class="fas fa-search"></i> Explore</button>
+    </div>
+  </div>
+
+  <!-- Story 4 -->
+  <div class="story-card">
+    <h3 onclick="window.location.href='story4.html'">Chase Growth, Not Perfection</h3>
+    <p>Michael Jordan missed thousands of shots but focused on improving daily. Growth beats perfection.</p>
+    <div class="buttons">
+      <button onclick="alert('Added to Favorites!')"><i class="fas fa-heart"></i> Favorite</button>
+      <button onclick="window.location.href='explore.html'"><i class="fas fa-search"></i> Explore</button>
+    </div>
+  </div>
+
+  <!-- Story 5 -->
+  <div class="story-card">
+    <h3 onclick="window.location.href='story5.html'">Hope Lights the Way</h3>
+    <p>Even small hopes can guide us forward. Like a candle in the dark, hope keeps us moving toward brighter days.</p>
+    <div class="buttons">
+      <button onclick="alert('Added to Favorites!')"><i class="fas fa-heart"></i> Favorite</button>
+      <button onclick="window.location.href='explore.html'"><i class="fas fa-search"></i> Explore</button>
+    </div>
+  </div>
+</section>
+
+<footer>© 2025 MindEase | Designed for Hackathon Presentation</footer>
+
+</body>
+</html>
